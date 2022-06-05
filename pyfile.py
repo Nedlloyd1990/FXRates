@@ -1,50 +1,38 @@
 import streamlit as st
-from yahoofinancials import YahooFinancials
 import pandas as pd
 from datetime import datetime
-import numpy as np
-import os
+import yfinance as yf
+from datetime import date
 
+st.sidebar.write("Historical Currency Conversion Rate-  USD")
 
+d = st.sidebar.date_input("Start Date", date(2005, 1, 1))
+start_d= d.strftime('%Y-%m-%d')
 
-currentDate=datetime.today().strftime('%Y-%m-%d')
+d1 = st.sidebar.date_input("End Date", datetime.today())
+end_d= d.strftime('%Y-%m-%d')
 
-currencies = [
-"XOFUSD=X","TWDUSD=X","AEDUSD=X","ALLUSD=X","ARSUSD=X","AUDUSD=X","AWGUSD=X","BBDUSD=X","BDTUSD=X","BGNUSD=X","BHDUSD=X","BIFUSD=X","BNDUSD=X","BOBUSD=X",
-"BSDUSD=X","BWPUSD=X","BZDUSD=X","CADUSD=X","CHFUSD=X","CLPUSD=X","CNYUSD=X","COPUSD=X","CRCUSD=X","CUPUSD=X","CVEUSD=X","CZKUSD=X","DJFUSD=X","DKKUSD=X",
-"DOPUSD=X","DZDUSD=X","EGPUSD=X","ETBUSD=X","EURUSD=X","GBPUSD=X","GMDUSD=X","GNFUSD=X","GTQUSD=X","HKDUSD=X","HNLUSD=X","HRKUSD=X","HTGUSD=X","HUFUSD=X",
-"IDRUSD=X","ILSUSD=X","INRUSD=X","IQDUSD=X","ISKUSD=X","JMDUSD=X","JODUSD=X","JPYUSD=X","KESUSD=X","KHRUSD=X","KMFUSD=X","KRWUSD=X","KWDUSD=X","KZTUSD=X",
-"LAKUSD=X","LBPUSD=X","LKRUSD=X","LSLUSD=X","LYDUSD=X","MADUSD=X","MDLUSD=X","MGAUSD=X","MKDUSD=X","MMKUSD=X","MOPUSD=X","MURUSD=X","MVRUSD=X","MWKUSD=X",
-"MXNUSD=X","MYRUSD=X","NADUSD=X","NGNUSD=X","NIOUSD=X","NOKUSD=X","NPRUSD=X","NZDUSD=X","OMRUSD=X","PABUSD=X","PENUSD=X","PGKUSD=X","PHPUSD=X","PKRUSD=X",
-"PLNUSD=X","PYGUSD=X","QARUSD=X","RUBUSD=X","RWFUSD=X","SARUSD=X","SCRUSD=X","SEKUSD=X","SLLUSD=X","SOSUSD=X","SZLUSD=X","THBUSD=X","TNDUSD=X","TRYUSD=X",
-"TTDUSD=X","TZSUSD=X","UAHUSD=X","UGXUSD=X","UYUUSD=X","UZSUSD=X","SGDUSD=X","VNDUSD=X","XAFUSD=X","XCDUSD=X","XOFUSD=X","XPFUSD=X","YERUSD=X","ZARUSD=X"]
-
+currencies = []
 dict1={}
 
 
-#st.sidebar.multiselect("select something", ["USDZAR=X","USDYER=X","USDXPF=X","USDXOF=X","USDXCD=X","USDXAF=X","USDVND=X","USDUZS=X","USDUYU=X","USDUGX=X","USDUAH=X","USDTZS=X","USDTTD=X","USDTRY=X","USDTND=X","USDTHB=X","USDSZL=X","USDSOS=X","USDSLL=X","USDSEK=X","USDSCR=X","USDSAR=X","USDRWF=X","USDRUB=X","USDQAR=X","USDPYG=X","USDPLN=X","USDPKR=X","USDPHP=X","USDPGK=X","USDPEN=X","USDPAB=X","USDOMR=X","USDNZD=X","USDNPR=X","USDNOK=X","USDNIO=X","USDNGN=X","USDNAD=X","USDMYR=X","USDMXN=X","USDMWK=X","USDMVR=X","USDMUR=X","USDMOP=X","USDMMK=X","USDMKD=X","USDMGA=X","USDMDL=X","USDMAD=X","USDLYD=X","USDLSL=X","USDLKR=X","USDLBP=X","USDLAK=X","USDKZT=X","USDKWD=X","USDKRW=X","USDKMF=X","USDKHR=X","USDKES=X","USDJPY=X","USDJOD=X","USDJMD=X","USDISK=X","USDIQD=X","USDINR=X","USDILS=X","USDIDR=X","USDHUF=X","USDHTG=X","USDHRK=X","USDHNL=X","USDHKD=X","USDGTQ=X","USDGNF=X","USDGMD=X","USDGBP=X","USDEUR=X","USDETB=X","USDEGP=X","USDDZD=X","USDDOP=X","USDDKK=X","USDDJF=X","USDCZK=X","USDCVE=X","USDCUP=X","USDCRC=X","USDCOP=X","USDCNY=X","USDCLP=X","USDCHF=X","USDCAD=X","USDBZD=X","USDBWP=X","USDBSD=X","USDBOB=X","USDBND=X","USDBIF=X","USDBHD=X","USDBGN=X","USDBDT=X","USDBBD=X","USDAWG=X","USDAUD=X","USDARS=X","USDALL=X","USDAED=X","USDTWD=X","USDSGD=X"],["USDZAR=X","USDYER=X","USDXPF=X","USDXOF=X","USDXCD=X","USDXAF=X","USDVND=X","USDUZS=X","USDUYU=X","USDUGX=X","USDUAH=X","USDTZS=X","USDTTD=X","USDTRY=X","USDTND=X","USDTHB=X","USDSZL=X","USDSOS=X","USDSLL=X","USDSEK=X","USDSCR=X","USDSAR=X","USDRWF=X","USDRUB=X","USDQAR=X","USDPYG=X","USDPLN=X","USDPKR=X","USDPHP=X","USDPGK=X","USDPEN=X","USDPAB=X","USDOMR=X","USDNZD=X","USDNPR=X","USDNOK=X","USDNIO=X","USDNGN=X","USDNAD=X","USDMYR=X","USDMXN=X","USDMWK=X","USDMVR=X","USDMUR=X","USDMOP=X","USDMMK=X","USDMKD=X","USDMGA=X","USDMDL=X","USDMAD=X","USDLYD=X","USDLSL=X","USDLKR=X","USDLBP=X","USDLAK=X","USDKZT=X","USDKWD=X","USDKRW=X","USDKMF=X","USDKHR=X","USDKES=X","USDJPY=X","USDJOD=X","USDJMD=X","USDISK=X","USDIQD=X","USDINR=X","USDILS=X","USDIDR=X","USDHUF=X","USDHTG=X","USDHRK=X","USDHNL=X","USDHKD=X","USDGTQ=X","USDGNF=X","USDGMD=X","USDGBP=X","USDEUR=X","USDETB=X","USDEGP=X","USDDZD=X","USDDOP=X","USDDKK=X","USDDJF=X","USDCZK=X","USDCVE=X","USDCUP=X","USDCRC=X","USDCOP=X","USDCNY=X","USDCLP=X","USDCHF=X","USDCAD=X","USDBZD=X","USDBWP=X","USDBSD=X","USDBOB=X","USDBND=X","USDBIF=X","USDBHD=X","USDBGN=X","USDBDT=X","USDBBD=X","USDAWG=X","USDAUD=X","USDARS=X","USDALL=X","USDAED=X","USDTWD=X","USDSGD=X"])
+options = st.multiselect(
+     'Enter New Currency',
+     ["AFN","AOA","AMD","SHP","AZN","BYN","BMD","BTN","USD","BAM","BRL","KYD","CDF","ANG","ERN","FKP","FJD","GEL","GHS","GIP","GYD","IRR","KPW","KGS","LRD","MRU","MNT","MZN","RON","WST","STN","RSD","SBD","SSP","SDG","SRD","SYP","TJS","TOP","TMT","VUV","VES","VED","ZMW","ZAR","YER","XPF","XCD","XAF","VND","SGD","UZS","UYU","UGX","UAH","TZS","TTD","TRY","TND","THB","SZL","SOS","SLL","SEK","SCR","SAR","RWF","RUB","QAR","PYG","PLN","PKR","PHP","PGK","PEN","PAB","OMR","NZD","NPR","NOK","NIO","NGN","NAD","MYR","MXN","MWK","MVR","MUR","MOP","MMK","MKD","MGA","MDL","MAD","LYD","LSL","LKR","LBP","LAK","KZT","KWD","KRW","KMF","KHR","KES","JPY","JOD","JMD","ISK","IQD","INR","ILS","IDR","HUF","HTG","HRK","HNL","HKD","GTQ","GNF","GMD","GBP","EUR","ETB","EGP","DZD","DOP","DKK","DJF","CZK","CVE","CUP","CRC","COP","CNY","CLP","CHF","CAD","BZD","BWP","BSD","BOB","BND","BIF","BHD","BGN","BDT","BBD","AWG","AUD","ARS","ALL","AED","TWD","XOF"],
+     ["ZAR","YER","XPF","XOF","XCD","XAF","VND","SGD","UZS","UYU","UGX","UAH","TZS","TTD","TRY","TND","THB","SZL","SOS","SLL","SEK","SCR","SAR","RWF","RUB","QAR","PYG","PLN","PKR","PHP","PGK","PEN","PAB","OMR","NZD","NPR","NOK","NIO","NGN","NAD","MYR","MXN","MWK","MVR","MUR","MOP","MMK","MKD","MGA","MDL","MAD","LYD","LSL","LKR","LBP","LAK","KZT","KWD","KRW","KMF","KHR","KES","JPY","JOD","JMD","ISK","IQD","INR","ILS","IDR","HUF","HTG","HRK","HNL","HKD","GTQ","GNF","GMD","GBP","EUR","ETB","EGP","DZD","DOP","DKK","DJF","CZK","CVE","CUP","CRC","COP","CNY","CLP","CHF","CAD","BZD","BWP","BSD","BOB","BND","BIF","BHD","BGN","BDT","BBD","AWG","AUD","ARS","ALL","AED","TWD","XOF"])
 
-yahoo_financials_currencies = YahooFinancials(currencies)
-data=yahoo_financials_currencies.get_historical_price_data("2005-01-01", str(currentDate), "daily")
-
-pdd=pd.DataFrame(data)
-
+for i in options:
+    currencies.append(i + "USD=X")
 
 for ccy in currencies:
-	filter1= pdd[str(ccy)]['prices']
-	filter2=pd.DataFrame(filter1).close
+	ccy_pair= yf.Ticker(ccy)
+	ccy_pair_list = ccy_pair.history(start=str(start_d) ,end=str(d1),  interval="1d")
+	dataframe=pd.DataFrame(ccy_pair_list)
+
+	filter2=pd.DataFrame(dataframe).Close
 	dict1[ccy]=filter2
-	#print("load")
-
-converttime=pd.DataFrame(filter1).formatted_date
-dict1['Date']=converttime
-
 
 d1=pd.DataFrame(dict1, columns=dict1.keys())
-column_to_move = d1.pop("Date")
-d1.insert(0, "Date", column_to_move)
-
-
 
 @st.cache
 def convert_df(df):
@@ -55,5 +43,6 @@ csv = convert_df(d1)
 
 
 st.dataframe(d1)
-#st.download_button(label='Download Current Result',   data=d1 , file_name= 'df_test.xlsx')
 st.download_button( "Click to Download", csv, "file.csv",  "text/csv",   key='download-csv')
+
+
