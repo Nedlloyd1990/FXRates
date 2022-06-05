@@ -15,7 +15,7 @@ end_d= d.strftime('%Y-%m-%d')
 currencies = []
 dict1={}
 
-
+ st.sidebar.write(Data Extracted for " + len(currencies) + " Currencies")
 options = st.sidebar.multiselect(
      'Enter New Currency',
      ["AFN","AOA","AMD","SHP","AZN","BYN","BMD","BTN","USD","BAM","BRL","KYD","CDF","ANG","ERN","FKP","FJD","GEL","GHS","GIP","GYD","IRR","KPW","KGS","LRD","MRU","MNT","MZN","RON","WST","STN","RSD","SBD","SSP","SDG","SRD","SYP","TJS","TOP","TMT","VUV","VES","VED","ZMW","ZAR","YER","XPF","XCD","XAF","VND","SGD","UZS","UYU","UGX","UAH","TZS","TTD","TRY","TND","THB","SZL","SOS","SLL","SEK","SCR","SAR","RWF","RUB","QAR","PYG","PLN","PKR","PHP","PGK","PEN","PAB","OMR","NZD","NPR","NOK","NIO","NGN","NAD","MYR","MXN","MWK","MVR","MUR","MOP","MMK","MKD","MGA","MDL","MAD","LYD","LSL","LKR","LBP","LAK","KZT","KWD","KRW","KMF","KHR","KES","JPY","JOD","JMD","ISK","IQD","INR","ILS","IDR","HUF","HTG","HRK","HNL","HKD","GTQ","GNF","GMD","GBP","EUR","ETB","EGP","DZD","DOP","DKK","DJF","CZK","CVE","CUP","CRC","COP","CNY","CLP","CHF","CAD","BZD","BWP","BSD","BOB","BND","BIF","BHD","BGN","BDT","BBD","AWG","AUD","ARS","ALL","AED","TWD","XOF"],
