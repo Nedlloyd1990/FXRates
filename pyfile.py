@@ -23,7 +23,7 @@ options = st.sidebar.multiselect(
 
 for i in options:
     currencies.append(i + "USD=X")
-st.write(Data Extracted for " + len(currencies) + " Currencies")
+st.write("Data Extracted for " + str(len(currencies)) + " Currencies")
 for ccy in currencies:
 	ccy_pair= yf.Ticker(ccy)
 	ccy_pair_list = ccy_pair.history(start=str(start_d) ,end=str(d1),  interval="1d")
